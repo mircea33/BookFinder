@@ -18,9 +18,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
-    EditText loginUsername, loginPassword;
-    Button loginButton;
-    TextView signupRedirectText;
+    private EditText loginUsername, loginPassword;
+    private Button loginButton;
+    private TextView signupRedirectText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

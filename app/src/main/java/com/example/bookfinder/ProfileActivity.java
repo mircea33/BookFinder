@@ -47,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         buttonCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(ProfileActivity.this);
+                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(ProfileActivity.this);;
             }
         });
 

@@ -1,4 +1,4 @@
-package com.example.bookfinder;
+package com.example.bookfinder.Activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -8,9 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.SparseArray;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,6 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.bookfinder.Fragments.FavoritesFragment;
+import com.example.bookfinder.Fragments.HomeFragment;
+import com.example.bookfinder.Fragments.LibraryFragment;
+import com.example.bookfinder.R;
 import com.example.bookfinder.databinding.ActivityProfileBinding;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
@@ -36,7 +37,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ActivityProfileBinding binding;
     private FloatingActionButton buttonCapture;
-    private TextView textViewData;
     private Bitmap bitmap;
     private static final int REQUEST_CAMERA_CODE = 100;;
 
@@ -119,8 +119,6 @@ public class ProfileActivity extends AppCompatActivity {
                 stringBuilder.append(textBlock.getValue());
                 stringBuilder.append("\n");
             }
-
-            textViewData.setText(stringBuilder.toString());
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
             builder.setTitle(stringBuilder);

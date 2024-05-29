@@ -24,11 +24,11 @@
             android:name=".BottomNavigation"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
-            android:parentActivityName=".LoginActivity"
+            android:name=".Activities.ProfileActivity"
+            android:parentActivityName=".Activities.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,12 +37,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".Activities.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="false" />
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
 
     </application>
 

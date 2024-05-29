@@ -1,4 +1,4 @@
-package com.example.bookfinder;
+package com.example.bookfinder.Activities;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.bookfinder.R;
 
 public class MainActivity extends AppCompatActivity {
 

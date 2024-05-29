@@ -1,15 +1,19 @@
 package com.example.bookfinder;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,11 +26,16 @@ import com.example.bookfinder.databinding.ActivityProfileBinding;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.IOException;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private ActivityProfileBinding binding;
-    private Button buttonCapture;
+    private FloatingActionButton buttonCapture;
     private TextView textViewData;
     private Bitmap bitmap;
     private static final int REQUEST_CAMERA_CODE = 100;;
@@ -39,20 +48,15 @@ public class ProfileActivity extends AppCompatActivity {
 
         buttonCapture = findViewById(R.id.ocr_scann);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_CODE);
+            ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_CODE);
         }
-
-        buttonCapture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(ProfileActivity.this);;
-            }
-        });
 
         replaceGragment(new HomeFragment());
         binding.bottomNavigationView.setBackground(null);
+
+        buttonCapture.setOnClickListener((v) -> CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(ProfileActivity.this));
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -76,6 +80,27 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK)
+            {
+                Uri resultUri = result.getUri();
+                try
+                {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                    getTextFromImage(bitmap);
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void getTextFromImage(Bitmap bitmap)
     {
         TextRecognizer recognizer = new TextRecognizer.Builder(this).build();
@@ -96,7 +121,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
             textViewData.setText(stringBuilder.toString());
-            buttonCapture.setText("Retake");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
             builder.setTitle(stringBuilder);
@@ -121,8 +145,8 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setTitle("Logout");
         builder.setMessage("Are you sure you want to log out?");
 
-        builder.setNegativeButton("No", (dialogInterface, i) -> {});
         builder.setPositiveButton("Yes", (dialogInterface, i) -> finish());
+        builder.setNegativeButton("No", (dialogInterface, i) -> {});
 
         builder.show();
     }

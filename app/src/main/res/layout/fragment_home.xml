@@ -10,9 +10,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Home"
         android:gravity="center"
         android:textSize="30sp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:id="@+id/textView"/>
 
 </FrameLayout>

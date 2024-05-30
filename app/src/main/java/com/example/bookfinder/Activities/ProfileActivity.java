@@ -38,7 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
     private ActivityProfileBinding binding;
     private FloatingActionButton buttonCapture;
     private Bitmap bitmap;
-    private static final int REQUEST_CAMERA_CODE = 100;;
+    private static final int REQUEST_CAMERA_CODE = 100;
+    public static String lastScannedBookTitle = "Mândrie și Prejudecată";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
                 stringBuilder.append("\n");
             }
 
+            lastScannedBookTitle = stringBuilder.toString();
             AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
             builder.setTitle(stringBuilder);
 

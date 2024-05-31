@@ -39,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FloatingActionButton buttonCapture;
     private Bitmap bitmap;
     private static final int REQUEST_CAMERA_CODE = 100;
-    public static String lastScannedBookTitle = "Mândrie și Prejudecată";
+    private String lastScannedBookTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +53,16 @@ public class ProfileActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_CODE);
         }
-
-        replaceGragment(new HomeFragment());
         binding.bottomNavigationView.setBackground(null);
 
         buttonCapture.setOnClickListener((v) -> CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(ProfileActivity.this));
 
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+        binding.bottomNavigationView.setOnItemSelectedListener(item ->
+        {
             int itemId = item.getItemId();
             if (itemId == R.id.homeMenu)
             {
-                replaceGragment(new HomeFragment());
+                replaceGragment(new HomeFragment(lastScannedBookTitle.trim()));
             }
             else if (itemId == R.id.favourites)
             {
@@ -82,7 +81,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         {

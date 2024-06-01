@@ -94,7 +94,8 @@ public class ProfileActivity extends AppCompatActivity {
                 {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
                     getTextFromImage(bitmap);
-                } catch (IOException e)
+                }
+                catch (IOException e)
                 {
                     e.printStackTrace();
                 }
@@ -123,11 +124,24 @@ public class ProfileActivity extends AppCompatActivity {
 
             lastScannedBookTitle = stringBuilder.toString();
             AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
-            builder.setTitle(stringBuilder);
+            builder.setTitle("Is the title of the book : " + stringBuilder + "?");
 
-            builder.setNegativeButton("No", (dialogInterface, i) -> {});
+            builder.setNegativeButton("yes", (dialogInterface, i) -> replaceGragment(new HomeFragment(lastScannedBookTitle.trim())));
+            builder.setPositiveButton("no", ((dialogInterface, i) ->
+            {
+                wouldYouLikeToRetakeThePicture();
+            }));
             builder.show();
         }
+    }
+
+    private void wouldYouLikeToRetakeThePicture()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setTitle("Would you like to retake the photo ?");
+        builder.setNegativeButton("No", (dialogInterface, i) -> {});
+        builder.setPositiveButton("Yes", (dialogInterface, i) ->  CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(ProfileActivity.this));
+        builder.show();
     }
 
     private void replaceGragment(Fragment fragment)

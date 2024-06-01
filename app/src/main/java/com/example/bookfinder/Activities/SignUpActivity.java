@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.bookfinder.HelperClass;
+import com.example.bookfinder.Entities.User;
 import com.example.bookfinder.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -60,8 +60,8 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-                HelperClass helperClass = new HelperClass(name, email, username, password);
-                reference.child(username).setValue(helperClass);
+                User user = new User(name, email, username, password);
+                reference.child(username).setValue(user);
 
                 Toast.makeText(SignUpActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);

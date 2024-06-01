@@ -20,14 +20,15 @@ import com.google.firebase.database.ValueEventListener;
 
 public class HomeFragment extends Fragment
 {
-    private static TextView textView;
+    private TextView textView;
     public HomeFragment(String lastScannedBookTitle)
     {
+        if (lastScannedBookTitle == null)
+        {
+            return;
+        }
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Books");
         Query checkBookInDataBase = reference.orderByChild("bookName").equalTo(lastScannedBookTitle);
-
-        if (checkBookInDataBase != null)
-        {
             checkBookInDataBase.addListenerForSingleValueEvent(new ValueEventListener()
             {
                 @Override
@@ -35,7 +36,7 @@ public class HomeFragment extends Fragment
                 {
                     if (snapshot.exists())
                     {
-                        String summaryOfBook = snapshot.child(lastScannedBookTitle).child("Resume").getValue(String.class);
+                        String summaryOfBook = snapshot.child(lastScannedBookTitle.trim()).child("resume").getValue(String.class);
                         String author = snapshot.child("author").getValue(String.class);
                         textView.setText(summaryOfBook);
                     }
@@ -47,7 +48,6 @@ public class HomeFragment extends Fragment
 
                 }
             });
-        }
     }
 
     @Override

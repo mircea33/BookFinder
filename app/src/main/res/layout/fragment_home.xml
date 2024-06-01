@@ -11,12 +11,12 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         >
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:textColor="@color/white"
-        android:id="@+id/textView"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:id="@+id/textView"/>
     </ScrollView>
 </FrameLayout>

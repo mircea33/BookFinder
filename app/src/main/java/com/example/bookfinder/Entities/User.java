@@ -5,36 +5,14 @@ import java.util.List;
 
 public class User
 {
-    private String username;
-    private String name;
-    private String email;
-    private String password;
-    List<Book> books = new ArrayList<>();
+    private String name, email, username, password;
+    private List<Book> favourites = new ArrayList<>();
 
-    public User(String username, String name, String email, String password, List<Book> books) {
-        this.username = username;
+    public User(String name, String email, String username, String password)
+    {
         this.name = name;
         this.email = email;
+        this.username = username;
         this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public List<Book> getBooks() {
-        return books;
     }
 }

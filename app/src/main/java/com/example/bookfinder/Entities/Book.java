@@ -5,7 +5,6 @@ public class Book
     private String bookName;
     private String author;
     private String resume;
-    private boolean isFavourite;
 
     public Book(String bookName, String author, String resume)
     {
@@ -24,13 +23,5 @@ public class Book
 
     public String getResume() {
         return resume;
-    }
-
-    public boolean isFavourite() {
-        return isFavourite;
-    }
-
-    public void setFavourite(boolean favourite) {
-        isFavourite = favourite;
     }
 }

@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,12 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -42,7 +49,8 @@ public class ProfileActivity extends AppCompatActivity {
     private String lastScannedBookTitle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -62,15 +70,15 @@ public class ProfileActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.homeMenu)
             {
-                replaceGragment(new HomeFragment(lastScannedBookTitle.trim()));
+                replaceFragment(new HomeFragment());
             }
             else if (itemId == R.id.favourites)
             {
-                replaceGragment(new FavoritesFragment());
+                replaceFragment(new FavoritesFragment());
             }
             else if (itemId == R.id.library)
             {
-                replaceGragment(new LibraryFragment());
+                replaceFragment(new LibraryFragment());
             }
             else if (itemId == R.id.logout)
             {
@@ -87,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK)
+            if (resultCode == RESULT_OK && result != null)
             {
                 Uri resultUri = result.getUri();
                 try
@@ -124,15 +132,49 @@ public class ProfileActivity extends AppCompatActivity {
 
             lastScannedBookTitle = stringBuilder.toString();
             AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
-            builder.setTitle("Is the title of the book : " + stringBuilder + "?");
-
-            builder.setNegativeButton("yes", (dialogInterface, i) -> replaceGragment(new HomeFragment(lastScannedBookTitle.trim())));
-            builder.setPositiveButton("no", ((dialogInterface, i) ->
-            {
-                wouldYouLikeToRetakeThePicture();
-            }));
+            builder.setTitle("Is the title of the book ?");
+            builder.setMessage(stringBuilder);
+            builder.setPositiveButton("yes", (dialogInterface, i) -> checkIfBookIsPresentInDb());
+            builder.setNegativeButton("no", ((dialogInterface, i) -> wouldYouLikeToRetakeThePicture()));
             builder.show();
         }
+    }
+
+    private void checkIfBookIsPresentInDb()
+    {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Books");
+        Query checkBookInDataBase = reference.orderByChild("bookName").equalTo(lastScannedBookTitle.trim());
+        checkBookInDataBase.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                if (snapshot.exists())
+                {
+                    String summaryOfBook = snapshot.child(lastScannedBookTitle.trim()).child("resume").getValue(String.class);
+                    String author = snapshot.child("author").getValue(String.class);
+
+                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                    intent.putExtra("summary", summaryOfBook);
+                    intent.putExtra("author", author);
+                    intent.putExtra("bookTitle", lastScannedBookTitle);
+
+                    startActivity(intent);
+                }
+                else
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                    builder.setTitle("We are sorry the book you are looking for is not present in our DB");
+                    builder.setNegativeButton("OK", (dialogInterface, i) -> {});
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
     }
 
     private void wouldYouLikeToRetakeThePicture()
@@ -144,7 +186,7 @@ public class ProfileActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void replaceGragment(Fragment fragment)
+    private void replaceFragment(Fragment fragment)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

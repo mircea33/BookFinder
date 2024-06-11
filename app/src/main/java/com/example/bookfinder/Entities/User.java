@@ -1,12 +1,16 @@
 package com.example.bookfinder.Entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class User
 {
-    private String name, email, username, password;
-    private List<Book> favourites = new ArrayList<>();
+    private String name;
+    private String email;
+    private String username;
+    private String password;
+    private Set<String> favourites = new HashSet<>();
+    private Set<String> library = new HashSet<>();
 
     public User(String name, String email, String username, String password)
     {
@@ -14,5 +18,30 @@ public class User
         this.email = email;
         this.username = username;
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Set<String> getFavourites() {
+        return favourites;
+    }
+
+    public Set<String> getLibrary()
+    {
+        return library;
     }
 }

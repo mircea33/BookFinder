@@ -25,7 +25,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView signupRedirectText;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -34,7 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         signupRedirectText = findViewById(R.id.signupRedirectText);
         loginButton = findViewById(R.id.login_button);
 
-        loginButton.setOnClickListener(view -> {
+        loginButton.setOnClickListener(view ->
+        {
             if (!validateUsername() | !validatePassword())
             {
             }
@@ -102,15 +104,10 @@ public class LoginActivity extends AppCompatActivity {
                     {
                         loginUsername.setError(null);
 
-                        String nameFromDB = snapshot.child(userUsername).child("name").getValue(String.class);
-                        String emailFromDB = snapshot.child(userUsername).child("email").getValue(String.class);
                         String usernameFromDB = snapshot.child(userUsername).child("username").getValue(String.class);
 
                         Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-                        intent.putExtra("name", nameFromDB);
-                        intent.putExtra("email", emailFromDB);
-                        intent.putExtra("username", usernameFromDB);
-                        intent.putExtra("password", passwordFromDB);
+                        intent.putExtra("name", usernameFromDB);
 
                         startActivity(intent);
                     }

@@ -24,7 +24,8 @@ public class SignUpActivity extends AppCompatActivity {
     private DatabaseReference reference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
@@ -35,47 +36,43 @@ public class SignUpActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signup_button);
         loginRedirectText = findViewById(R.id.loginRedirectText);
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                database = FirebaseDatabase.getInstance();
-                reference = database.getReference("users");
-
-                EditText[] editTextBoxes = new EditText[]{signupName, signupEmail, signupUsername, signupPassword};
-                if (isAlertRequired(editTextBoxes))
+        signupButton.setOnClickListener((view) ->
                 {
-                    return;
-                }
 
-                String name = signupName.getText().toString();
-                String email = signupEmail.getText().toString();
-                String username = signupUsername.getText().toString();
-                String password = signupPassword.getText().toString();
+                    database = FirebaseDatabase.getInstance();
+                    reference = database.getReference("users");
 
-                if (!email.contains("@"))
-                {
-                    signupEmail.setError("Invalid credentials");
-                    signupEmail.requestFocus();
-                    return;
-                }
+                    EditText[] editTextBoxes = new EditText[]{signupName, signupEmail, signupUsername, signupPassword};
+                     if (isAlertRequired(editTextBoxes))
+                     {
+                         return;
+                     }
 
-                User user = new User(name, email, username, password);
-                reference.child(username).setValue(user);
+                    String name = signupName.getText().toString();
+                    String email = signupEmail.getText().toString();
+                    String username = signupUsername.getText().toString();
+                    String password = signupPassword.getText().toString();
 
-                Toast.makeText(SignUpActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
+                    if (!email.contains("@"))
+                    {
+                        signupEmail.setError("Invalid credentials");
+                       signupEmail.requestFocus();
+                       return;
+                    }
+
+                     User user = new User(name, email, username, password);
+                    reference.child(username).setValue(user);
+
+                     Toast.makeText(SignUpActivity.this, "You have signed up successfully!", Toast.LENGTH_SHORT).show();
+                     Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                        startActivity(intent);
+            }
+        );
+
+        loginRedirectText.setOnClickListener((view) ->
+        {
                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                 startActivity(intent);
-            }
-        });
-
-        loginRedirectText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
         });
     }
 

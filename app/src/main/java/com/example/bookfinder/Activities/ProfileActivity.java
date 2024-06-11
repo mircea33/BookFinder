@@ -134,8 +134,10 @@ public class ProfileActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
             builder.setTitle("Is the title of the book ?");
             builder.setMessage(stringBuilder);
+
             builder.setPositiveButton("yes", (dialogInterface, i) -> checkIfBookIsPresentInDb());
             builder.setNegativeButton("no", ((dialogInterface, i) -> wouldYouLikeToRetakeThePicture()));
+
             builder.show();
         }
     }
@@ -152,12 +154,17 @@ public class ProfileActivity extends AppCompatActivity {
                 if (snapshot.exists())
                 {
                     String summaryOfBook = snapshot.child(lastScannedBookTitle.trim()).child("resume").getValue(String.class);
-                    String author = snapshot.child("author").getValue(String.class);
+                    String author = snapshot.child(lastScannedBookTitle.trim()).child("author").getValue(String.class);
+                    String genre = snapshot.child(lastScannedBookTitle.trim()).child("genre").getValue(String.class);
+
+                    String username = getIntent().getStringExtra("name");
 
                     Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
                     intent.putExtra("summary", summaryOfBook);
                     intent.putExtra("author", author);
                     intent.putExtra("bookTitle", lastScannedBookTitle);
+                    intent.putExtra("genre", genre);
+                    intent.putExtra("username", username);
 
                     startActivity(intent);
                 }
@@ -166,6 +173,7 @@ public class ProfileActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
                     builder.setTitle("We are sorry the book you are looking for is not present in our DB");
                     builder.setNegativeButton("OK", (dialogInterface, i) -> {});
+                    builder.show();
                 }
             }
 

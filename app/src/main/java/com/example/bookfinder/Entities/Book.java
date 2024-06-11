@@ -5,12 +5,14 @@ public class Book
     private String bookName;
     private String author;
     private String resume;
+    private String genre;
 
-    public Book(String bookName, String author, String resume)
+    public Book(String bookName, String author, String resume, String genre)
     {
         this.bookName = bookName;
         this.author = author;
         this.resume = resume;
+        this.genre = genre;
     }
 
     public String getBookName() {
@@ -23,5 +25,9 @@ public class Book
 
     public String getResume() {
         return resume;
+    }
+
+    public String getGenre() {
+        return genre;
     }
 }

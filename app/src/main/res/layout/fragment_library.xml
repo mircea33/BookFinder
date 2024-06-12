@@ -6,12 +6,9 @@
     android:background="@color/lavender"
     tools:context=".Fragments.LibraryFragment">
 
-    <TextView
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Library"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:textColor="@color/white"/>
+        android:layout_height="match_parent" />
 
 </FrameLayout>

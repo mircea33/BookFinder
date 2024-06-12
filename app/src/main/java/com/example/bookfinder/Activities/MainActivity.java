@@ -19,11 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +72,8 @@ public class MainActivity extends AppCompatActivity
                 if (snapshot.exists())
                 {
                     DatabaseReference userRef = snapshot.getChildren().iterator().next().getRef();
-                    List<String> library = getValuesInTabel(userName, tabelName);
+                    List<String> library = new ArrayList<>();
+                    getValuesInTabelFromUser(library, userName, tabelName, (elementsInTabel -> {}));
                     library.add(bookTitle);
                     userRef.child(tabelName).setValue(library);
                 }
@@ -91,32 +87,39 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private List<String> getValuesInTabel(String username, String tabelName)
-    {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference usersRef = db.collection("users");
+    public static void getValuesInTabelFromUser(List<String> interestedValues, String username, String tabelName, OnDataLoadedListener listener) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+        Query checkUserDatabase = reference.orderByChild("username").equalTo(username);
 
-        DocumentReference userDocRef = usersRef.document(username);
-        List<String> valuesInTabel = new ArrayList<>();
-        userDocRef.get().addOnCompleteListener(task ->
-        {
-            if (task.isSuccessful())
-            {
-               DocumentSnapshot document = task.getResult();
-               if (document.exists())
-               {
-                    List<String> tabelInuser = (List<String>) document.get(tabelName);
-                    if (tabelInuser != null)
-                    {
-                        for (String book : tabelInuser)
-                        {
-                            tabelInuser.add(book);
+        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<String> elementsInTabel = new ArrayList<>();
+                if (snapshot.exists()) {
+                    List<String> valuesInTabel = (List<String>) snapshot.child(username).child(tabelName).getValue();
+                    if (valuesInTabel != null) {
+                        for (String element : valuesInTabel) {
+                            interestedValues.add(element.trim());
                         }
                     }
+                } else {
+                    System.out.println("No such user exists");
                 }
+                // Invoke the callback with the retrieved data
+                listener.onDataLoaded(elementsInTabel);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle cancellation
+                System.out.println("Database operation cancelled: " + error.getMessage());
             }
         });
-
-        return valuesInTabel;
     }
+
+    // Define an interface for the callback
+    public interface OnDataLoadedListener {
+        void onDataLoaded(List<String> elementsInTabel);
+    }
+
 }

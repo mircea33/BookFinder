@@ -19,6 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText loginUsername, loginPassword;
     private Button loginButton;
@@ -105,10 +107,13 @@ public class LoginActivity extends AppCompatActivity {
                         loginUsername.setError(null);
 
                         String usernameFromDB = snapshot.child(userUsername).child("username").getValue(String.class);
+                        List<String> favouritesValues = (List<String>) snapshot.child(userUsername).child("Favourites").getValue();
+                        List<String> library = (List<String>) snapshot.child(userUsername).child("Library").getValue();
 
                         Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
                         intent.putExtra("name", usernameFromDB);
-
+                        intent.putExtra("Favourites", getElementes(favouritesValues));
+                        intent.putExtra("Library", getElementes(library));
                         startActivity(intent);
                     }
                     else
@@ -130,5 +135,23 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private String getElementes(List<String> books)
+    {
+        String bookSeparatedByComma = "";
+
+        for (String book : books)
+        {
+            if (bookSeparatedByComma.isEmpty())
+            {
+                bookSeparatedByComma = book;
+                continue;
+            }
+
+            bookSeparatedByComma = bookSeparatedByComma + "," + book;
+        }
+
+        return bookSeparatedByComma;
     }
 }

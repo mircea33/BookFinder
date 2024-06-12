@@ -74,11 +74,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
             else if (itemId == R.id.favourites)
             {
-                replaceFragment(new FavoritesFragment());
+                replaceFragment(new FavoritesFragment(getIntent().getStringExtra("name")));
             }
             else if (itemId == R.id.library)
             {
-                replaceFragment(new LibraryFragment());
+                replaceFragment(new LibraryFragment(getIntent().getStringExtra("name")));
             }
             else if (itemId == R.id.logout)
             {

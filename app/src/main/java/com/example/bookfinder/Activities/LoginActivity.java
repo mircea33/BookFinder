@@ -112,8 +112,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
                         intent.putExtra("name", usernameFromDB);
-                        intent.putExtra("Favourites", getElementes(favouritesValues));
-                        intent.putExtra("Library", getElementes(library));
+                        intent.putExtra("FavouritesFromLogin", getElementes(favouritesValues));
+                        intent.putExtra("LibraryFromLogin", getElementes(library));
                         startActivity(intent);
                     }
                     else
@@ -141,6 +141,10 @@ public class LoginActivity extends AppCompatActivity {
     {
         String bookSeparatedByComma = "";
 
+        if (books == null)
+        {
+            return null;
+        }
         for (String book : books)
         {
             if (bookSeparatedByComma.isEmpty())

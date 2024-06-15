@@ -46,6 +46,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-vision:19.0.0")
     implementation("com.theartofdev.edmodo:android-image-cropper:2.8.0")
     implementation(libs.firebase.firestore)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

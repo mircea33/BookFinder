@@ -2,6 +2,7 @@ package com.example.bookfinder.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -48,18 +51,43 @@ public class MainActivity extends AppCompatActivity
         String bookTitle = intent.getStringExtra("bookTitle");
         String username = intent.getStringExtra("username");
 
-        addElementToDBInUser(username, bookTitle, "Library");
+        if (ProfileActivity.library != null)
+        {
+            ProfileActivity.library += "," + bookTitle;
+        }
 
+        else
+        {
+            ProfileActivity.library = bookTitle;
+        }
+
+        addElementToDBInUser(username, "Library", ProfileActivity.library);
+
+        if (ProfileActivity.favourites != null && ProfileActivity.favourites.contains(bookTitle))
+        {
+            addToFavouritesButton.setVisibility(View.INVISIBLE);
+        }
         addToFavouritesButton.setOnClickListener(view ->
         {
-            addElementToDBInUser(username, bookTitle, "Favourites");
+            if (ProfileActivity.favourites != null && !ProfileActivity.favourites.contains(bookTitle))
+            {
+                ProfileActivity.favourites += "," + bookTitle;
+            }
+
+            else
+            {
+                ProfileActivity.favourites = bookTitle;
+            }
+
+            addElementToDBInUser(username, "Favourites", ProfileActivity.favourites);
             Toast.makeText(MainActivity.this, "The book has been added to favourites!", Toast.LENGTH_SHORT).show();
         });
 
         textView.setText(bookTitle + " by " + author + "\n Summary: \n" + summary);
+
     }
 
-    private void addElementToDBInUser(String userName, String bookTitle, String tabelName)
+    private void addElementToDBInUser(String userName, String tabelName, String valueOfListInIntent)
     {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
         Query checkUserDatabase = reference.orderByChild("username").equalTo(userName);
@@ -72,9 +100,11 @@ public class MainActivity extends AppCompatActivity
                 if (snapshot.exists())
                 {
                     DatabaseReference userRef = snapshot.getChildren().iterator().next().getRef();
-                    List<String> library = new ArrayList<>();
-                    getValuesInTabelFromUser(library, userName, tabelName, (elementsInTabel -> {}));
-                    library.add(bookTitle);
+                    List<String> library = listOfBooksToAdd(valueOfListInIntent);
+                    if (library == null)
+                    {
+                        library = new ArrayList<>();
+                    }
                     userRef.child(tabelName).setValue(library);
                 }
             }
@@ -87,39 +117,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public static void getValuesInTabelFromUser(List<String> interestedValues, String username, String tabelName, OnDataLoadedListener listener) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        Query checkUserDatabase = reference.orderByChild("username").equalTo(username);
-
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<String> elementsInTabel = new ArrayList<>();
-                if (snapshot.exists()) {
-                    List<String> valuesInTabel = (List<String>) snapshot.child(username).child(tabelName).getValue();
-                    if (valuesInTabel != null) {
-                        for (String element : valuesInTabel) {
-                            interestedValues.add(element.trim());
-                        }
-                    }
-                } else {
-                    System.out.println("No such user exists");
-                }
-                // Invoke the callback with the retrieved data
-                listener.onDataLoaded(elementsInTabel);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle cancellation
-                System.out.println("Database operation cancelled: " + error.getMessage());
-            }
-        });
+    private List<String> listOfBooksToAdd(String typeOfList)
+    {
+        return typeOfList != null ? Arrays.asList(typeOfList.split(",")) : null;
     }
-
-    // Define an interface for the callback
-    public interface OnDataLoadedListener {
-        void onDataLoaded(List<String> elementsInTabel);
-    }
-
 }

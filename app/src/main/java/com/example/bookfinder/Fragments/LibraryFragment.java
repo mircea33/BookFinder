@@ -28,12 +28,12 @@ public class LibraryFragment extends Fragment
 {
     private String username;
     private ListView listView;
-    private List<String> listInLibrary = new ArrayList<>();
-    public LibraryFragment(String username)
+    private String[] listInLibrary;
+    public LibraryFragment(String username, String libraryFromLogin)
     {
         super();
         this.username = username;
-        MainActivity.getValuesInTabelFromUser(listInLibrary, username, "Library", elementsInTabel ->  {});
+        listInLibrary = libraryFromLogin != null ? libraryFromLogin.split(",") : null;
     }
 
     @Override
@@ -44,10 +44,14 @@ public class LibraryFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         listView = view.findViewById(R.id.listView);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listInLibrary);
-        listView.setAdapter(adapter);
+        if (listInLibrary != null)
+        {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listInLibrary);
+            listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view1, position, id) -> checkIfBookIsPresentInDb(listInLibrary.get(position)));
+            listView.setOnItemClickListener((parent, view1, position, id) -> checkIfBookIsPresentInDb(listInLibrary[position]));
+        }
+
         return view;
     }
 

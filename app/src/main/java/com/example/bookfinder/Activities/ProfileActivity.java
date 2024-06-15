@@ -47,11 +47,21 @@ public class ProfileActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private static final int REQUEST_CAMERA_CODE = 100;
     private String lastScannedBookTitle;
+    public static String favourites;
+    public static String library;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if (library == null || favourites == null)
+        {
+            favourites = intent.getStringExtra("FavouritesFromLogin");
+            library = intent.getStringExtra("LibraryFromLogin");
+        }
+
+
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -74,11 +84,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
             else if (itemId == R.id.favourites)
             {
-                replaceFragment(new FavoritesFragment(getIntent().getStringExtra("name")));
+                replaceFragment(new FavoritesFragment(intent.getStringExtra("name"), favourites));
             }
             else if (itemId == R.id.library)
             {
-                replaceFragment(new LibraryFragment(getIntent().getStringExtra("name")));
+                replaceFragment(new LibraryFragment(intent.getStringExtra("name"), library));
             }
             else if (itemId == R.id.logout)
             {
@@ -165,7 +175,6 @@ public class ProfileActivity extends AppCompatActivity {
                     intent.putExtra("bookTitle", lastScannedBookTitle);
                     intent.putExtra("genre", genre);
                     intent.putExtra("username", username);
-
                     startActivity(intent);
                 }
                 else
@@ -213,5 +222,7 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setNegativeButton("No", (dialogInterface, i) -> {});
 
         builder.show();
+        library = null;
+        favourites= null;
     }
 }

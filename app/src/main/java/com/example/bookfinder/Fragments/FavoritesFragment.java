@@ -2,19 +2,16 @@ package com.example.bookfinder.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.bookfinder.Activities.MainActivity;
-import com.example.bookfinder.Activities.ProfileActivity;
 import com.example.bookfinder.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,20 +20,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class FavoritesFragment extends Fragment
 {
     private String username;
     private ListView listView;
-    private List<String> listOfFavourites = new ArrayList<>();
+    private String[] listOfFavourites;
 
-    public FavoritesFragment(String username)
+    public FavoritesFragment(String username, String favouritesSeparatedByComma)
     {
         super();
         this.username = username;
-        MainActivity.getValuesInTabelFromUser(listOfFavourites, username, "Favourites", elementsInTabel ->  {});
+        listOfFavourites = favouritesSeparatedByComma != null ? favouritesSeparatedByComma.split(",") : null;
     }
 
     @Override
@@ -47,10 +41,14 @@ public class FavoritesFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         listView = view.findViewById(R.id.listView);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listOfFavourites);
-        listView.setAdapter(adapter);
+        if (listOfFavourites != null)
+        {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listOfFavourites);
+            listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view1, position, id) -> checkIfBookIsPresentInDb(listOfFavourites.get(position)));
+            listView.setOnItemClickListener((parent, view1, position, id) -> checkIfBookIsPresentInDb(listOfFavourites[position]));
+        }
+
         return view;
     }
 
